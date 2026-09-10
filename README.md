@@ -56,6 +56,36 @@ README.md               ← 本文件
 要让两边一致：在电脑上「学习设置 → 导出备份」下载 JSON，传到手机后「导入备份」。
 想做自动同步就得接一个后端/云数据库。
 
+## 上传到 GitHub（顺便发布成网页）
+
+仓库已经准备好了：根目录的 `index.html` 会自动跳到 `outputs/study_os.html`，
+`.nojekyll` 让 GitHub Pages 不做多余处理。你只需要在自己的账号下建一个空仓库，然后：
+
+```
+cd D:\codex\StudyOS
+git branch -M main
+git remote add origin https://github.com/你的用户名/仓库名.git
+git push -u origin main
+```
+
+推完在仓库页面点 **Settings → Pages → Source: Deploy from a branch → Branch: main / (root) → Save**，
+大约一分钟后访问：
+
+```
+https://你的用户名.github.io/仓库名/
+```
+
+这个网址在任何网络下都能打开，手机也可以「添加到主屏幕」，不再依赖电脑开机。
+
+注意事项：
+
+- GitHub 免费账号的 Pages **只支持公开仓库**。公开意味着任何人都能看到这个页面和仓库里的文档
+  （页面上是你的学习计划，文档里是项目说明，自己判断能不能接受）。想保持私密就得升级账号，
+  或者改用 Cloudflare Pages / Vercel（免费额度支持私有仓库）。
+- 第一次打开 Pages 网址时，数据是空的：那是新的域名，浏览器里没有你的任务。先在电脑上
+  「导出备份」，再到新网址里「导入备份」。
+- 以后代码有改动，只要 `git push`，Pages 会在一分钟内自动更新，手机刷新即可。
+
 ## 版本管理（git）
 
 每次改动都会提交一次，所以任何一版都能退回来。在 PowerShell 里：

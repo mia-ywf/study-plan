@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudyOS</title>
+<style>
+:root{--bg:#0b1020;--p:#12182b;--p2:#171f36;--t:#eef3ff;--m:#9aa7c0;--l:#28314a;--a:#7aa2ff;--g:#65d6b2;--d:#ff6f7d;--w:#e8b661}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;background:linear-gradient(#090e1b,#0e1426);color:var(--t);min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.side{padding:20px;border-right:1px solid var(--l);background:#0a0f1c;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{font-size:21px;font-weight:800}
+.logo span{color:var(--a)}
+.sub{color:var(--m);font-size:12px;margin:5px 0 18px}
+.nav button{width:100%;border:0;background:none;color:var(--m);padding:10px 12px;text-align:left;border-radius:9px;margin:2px 0}
+.nav .on,.nav button:hover{background:#1b2540;color:#fff}
+.mini{margin-top:20px;border:1px solid var(--l);background:#10172a;border-radius:13px;padding:13px}
+.mini h4{margin:0 0 9px;font-size:12px}
+.r{display:flex;justify-content:space-between;font-size:11px;color:var(--m);margin:8px 0 4px}
+.bar{height:5px;background:#252e45;border-radius:9px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--g));border-radius:9px}
+.main{padding:22px;max-width:1500px;width:100%;margin:auto}
+.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.title h1{margin:0;font-size:27px}
+.title p{margin:5px 0 0;color:var(--m);font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--l);background:#141c31;color:#eaf0ff;padding:9px 12px;border-radius:9px}
+.btn:hover{background:#1b2540}
+.btn.primary{background:#365fd0;border-color:#5277e2}
+.btn.green{background:#153e37;border-color:#286153}
+.btn.danger{background:#3d2027;border-color:#6a303b}
+.btn:disabled{opacity:.6;cursor:default}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.stat{background:var(--p);border:1px solid var(--l);padding:12px;border-radius:13px}
+.stat b{font-size:21px;display:block}
+.stat span{font-size:11px;color:var(--m)}
+.grid{display:grid;grid-template-columns:1.12fr .88fr;gap:14px}
+.card{background:rgba(18,24,43,.92);border:1px solid var(--l);border-radius:15px;padding:15px;box-shadow:0 16px 40px rgba(0,0,0,.16)}
+.card h3{font-size:14px;margin:0 0 11px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.day{min-height:155px;background:#10172a;border:1px solid var(--l);border-radius:10px;padding:8px}
+.day b{font-size:12px}
+.dow{font-size:10px;color:var(--m)}
+.daycap{font-size:9px;color:#7f8aa3;margin-top:4px;border-bottom:1px dashed #26304a;padding-bottom:5px}
+.chip{margin-top:6px;padding:6px 7px;background:#192541;border-radius:8px;border-left:3px solid var(--a);font-size:10px;line-height:1.45}
+.chip i{font-style:normal;display:block;color:#9fb6ff;font-weight:700;font-size:10px;margin-bottom:2px}
+.chip.done{opacity:.4;text-decoration:line-through}
+.catline{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:7px 0 3px;font-size:10px;color:#dbe4f7}
+.catline b{font-size:11px;color:#fff}
+.catline em{font-style:normal;font-size:9px;color:#8fa0c0;margin-left:auto}
+.subline{display:flex;justify-content:space-between;gap:6px;font-size:9.5px;color:#8e9ab1;padding:2px 0 2px 7px;border-left:2px solid #26304a;margin-left:1px;line-height:1.4}
+.subline span{color:#6e7890;white-space:nowrap}
+.subline.done{opacity:.45;text-decoration:line-through}
+.catnote{font-size:9.5px;color:#8e9ab1;line-height:1.55;padding-left:7px;border-left:2px solid #26304a;margin:0 0 4px 1px}
+.catgrp{border:1px solid #26304a;border-radius:9px;padding:7px 9px;background:#0f1729}
+.catgrp .hd{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700}
+.muted{color:#6e7890;font-size:10px}
+.list{display:flex;flex-direction:column;gap:8px}
+.task{display:grid;grid-template-columns:24px 1fr auto;gap:9px;align-items:center;background:#111a30;border:1px solid var(--l);padding:9px;border-radius:10px}
+.task h4{margin:0;font-size:12px}
+.task p{margin:3px 0 0;color:var(--m);font-size:10px}
+.task input{width:16px;height:16px}
+.tag{padding:2px 6px;border-radius:99px;background:#202b46;color:#bdcbee;font-size:9px}
+.right{text-align:right}
+.right b{font-size:11px}
+.right small{display:block;color:var(--m);font-size:9px}
+.notice{background:#18243c;border:1px solid #2a3b61;padding:9px;border-radius:9px;color:#c8d5f2;font-size:10px;line-height:1.7}
+.warn{background:#2a2118;border:1px solid #6b5327;padding:9px;border-radius:9px;color:#f0d9a8;font-size:10px;line-height:1.7}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{margin:0 0 10px}
+.field label{display:block;color:var(--m);font-size:10px;margin-bottom:4px}
+input,select,textarea{width:100%;padding:9px;border-radius:8px;border:1px solid var(--l);background:#0e1527;color:var(--t);outline:none}
+textarea{font-family:ui-monospace,Consolas,monospace;font-size:11px;line-height:1.6}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal.show{display:flex}
+.dialog{max-width:700px;width:100%;background:#12182b;border:1px solid var(--l);border-radius:16px;padding:16px;max-height:92vh;overflow:auto}
+.dialog h2{font-size:17px;margin:0 0 14px}
+.foot{display:flex;justify-content:flex-end;gap:8px}
+.helper{font-size:11px;color:var(--m);line-height:1.8}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#1b2540;border:1px solid #34507f;color:#eaf0ff;padding:11px 14px;border-radius:11px;display:flex;gap:12px;align-items:center;font-size:12px;opacity:0;pointer-events:none;transition:.22s;z-index:20;max-width:92vw}
+.toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.toast button{border:1px solid #4c6ba8;background:#243254;color:#dce6ff;border-radius:8px;padding:6px 10px;font-size:11px}
+@media(max-width:980px){
+.app{grid-template-columns:1fr}
+.side{height:auto;position:static;border-right:0;border-bottom:1px solid var(--l)}
+.grid{grid-template-columns:1fr}
+.cal{grid-template-columns:1fr}
+.stats{grid-template-columns:repeat(2,1fr)}
+.main{padding:14px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="logo">Study<span>OS</span></div>
+  <div class="sub">考研 · 项目 · 实习 · 英语</div>
+  <div class="nav">
+    <button class="on" onclick="view('dash',this)">📊 总览</button>
+    <button onclick="view('tasks',this)">✅ 任务库</button>
+    <button onclick="view('settings',this)">⚙️ 学习设置</button>
+  </div>
+  <div class="mini">
+    <h4>阶段完成度</h4>
+    <div class="r"><span>408</span><span id="p408">0%</span></div>
+    <div class="bar"><i id="b408"></i></div>
+    <div class="r"><span>后端/项目</span><span id="ppro">0%</span></div>
+    <div class="bar"><i id="bpro"></i></div>
+    <div class="r"><span>代码/算法</span><span id="pcode">0%</span></div>
+    <div class="bar"><i id="bcode"></i></div>
+  </div>
+  <div class="mini">
+    <h4>排程规则</h4>
+    <div class="helper">时间窗只用来算你那天<b>有多少小时可用</b>（满课的日子自然少，周末多），不规定几点学。按「截止日 + 优先级 + 方向权重」分配每天学多久、学哪几类。改任何约束后点“智能重排”。</div>
+  </div>
+</aside>
+<main class="main">
+  <div class="top">
+    <div class="title">
+      <h1 id="pt">今日学习中枢</h1>
+      <p id="line"></p>
+      <p id="planStatus" style="margin:6px 0 0;color:#65d6b2;font-size:11px"></p>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="goToday()">今天</button>
+      <button id="planBtn" class="btn green" onclick="plan()">✨ 智能重排</button>
+      <button class="btn primary" onclick="openModal()">＋ 新任务</button>
+    </div>
+  </div>
+
+  <section id="dash">
+    <div class="stats">
+      <div class="stat"><b id="stoday">0h</b><span id="stodaySub">今日自习</span></div>
+      <div class="stat"><b id="sdone">0%</b><span>任务完成率</span></div>
+      <div class="stat"><b id="sback">0</b><span>待完成任务</span></div>
+      <div class="stat"><b id="sdue">--</b><span>最近截止</span></div>
+    </div>
+
+    <div id="overload" class="warn" style="display:none;margin-bottom:14px"></div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>未来 7 天 · 每天学多久、学哪类</h3>
+        <div id="cal" class="cal"></div>
+      </div>
+      <div class="card">
+        <h3>今日计划</h3>
+        <div class="notice" id="todayNotice"></div>
+        <div style="height:9px"></div>
+        <div id="todayList" class="list"></div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+    <div class="card">
+      <h3>本学期固定课表（已从可用时间窗里扣除）</h3>
+      <div class="two">
+        <div class="notice" id="cls1"></div>
+        <div class="notice" id="cls2"></div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+    <div class="grid">
+      <div class="card">
+        <h3>近期关键任务</h3>
+        <div id="up" class="list"></div>
+      </div>
+      <div class="card">
+        <h3>你的学习闭环</h3>
+        <div class="helper">408 是考研主线；数学/英语长期积累；Java 后端 + 项目是就业主线；算法同时服务实习与复试；六级与考研英语复用。9 月—10 月底利用在校课程吃透 OS/计网，同时复盘组成原理/数据结构；11 月考试后再明显提高 408 强度和项目投入。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tasks" style="display:none">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <h3 style="margin:0">任务库 <span class="muted" style="font-weight:400;font-size:11px">· 删除会立即移除并自动重排，可撤销</span></h3>
+        <div class="actions">
+          <button class="btn" onclick="setFilter('all')">全部</button>
+          <button class="btn" onclick="setFilter('todo')">待完成</button>
+          <button class="btn" onclick="setFilter('done')">已完成</button>
+        </div>
+      </div>
+      <div id="taskList" class="list"></div>
+    </div>
+  </section>
+
+  <section id="settings" style="display:none">
+    <div class="grid">
+      <div class="card">
+        <h3>排程参数</h3>
+        <div class="two">
+          <div class="field"><label>每天机动时间（小时，从可用时间里预留）</label><input id="sReserve" type="number" min="0" max="4" step=".25"></div>
+          <div class="field"><label>学期最后一天（之后的课表自动失效）</label><input id="sEnd" type="date"></div>
+        </div>
+        <div class="two">
+          <div class="field"><label>最小学习单元（分钟，低于此不单独安排）</label><input id="sUnit" type="number" min="10" max="90" step="5"></div>
+          <div class="field"><label>单个任务每天上限（小时）</label><input id="sPer" type="number" min=".5" max="8" step=".25"></div>
+        </div>
+        <button class="btn primary" onclick="saveSettings()">保存并重排</button>
+      </div>
+      <div class="card">
+        <h3>数据</h3>
+        <div class="helper">改数据结构不会丢任务：这里可以导出/导入一份 JSON 备份，也可以在换设备时用。</div>
+        <div style="height:9px"></div>
+        <div class="actions">
+          <button class="btn" onclick="exportJSON()">⬇️ 导出备份</button>
+          <button class="btn" onclick="document.getElementById('importFile').click()">⬆️ 导入备份</button>
+          <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importJSON(this.files[0])">
+          <button class="btn danger" onclick="resetAll()">恢复默认模板</button>
+        </div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="grid">
+      <div class="card">
+        <h3>可用时间窗（日常）</h3>
+        <div class="helper" style="margin-bottom:8px">每行一天，格式：<code>一 19:00-22:00</code>，一天多个时段用逗号分隔。这是你真正能坐下来学的时段，午休与睡觉时间不要写进来。</div>
+        <textarea id="tAvail" rows="8"></textarea>
+      </div>
+      <div class="card">
+        <h3>可用时间窗（学期结束后）</h3>
+        <div class="helper" style="margin-bottom:8px">学期最后一天之后系统改用这一套（默认是“没课但有考试”的状态）。之后你想改哪套就改哪套。</div>
+        <textarea id="tAvailOff" rows="8"></textarea>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="card">
+      <h3>固定课表</h3>
+      <div class="helper" style="margin-bottom:8px">每行一节，格式：<code>一 10:05-11:50 操作系统 @N333</code>。教室可省略。课表在这里改，排程会立刻重新扣除。</div>
+      <textarea id="tClasses" rows="10"></textarea>
+      <div style="height:10px"></div>
+      <button class="btn primary" onclick="saveSettings()">保存并重排</button>
+      <span id="setMsg" class="muted" style="margin-left:10px"></span>
+    </div>
+  </section>
+</main>
+</div>
+
+<div id="modal" class="modal">
+  <div class="dialog">
+    <h2 id="mt">新任务</h2>
+    <div class="two">
+      <div class="field"><label>任务</label><input id="f1"></div>
+      <div class="field"><label>方向</label><select id="f2"></select></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>截止日期</label><input id="f3" type="date"></div>
+      <div class="field"><label>总时长（小时）</label><input id="f4" type="number" min=".25" step=".25"></div>
+    </div>
+    <div class="two">
+      <div class="field"><label>优先级</label><select id="f5">
+        <option value="5">5 · 必做</option>
+        <option value="4">4 · 高</option>
+        <option value="3" selected>3 · 中</option>
+        <option value="2">2 · 低</option>
+        <option value="1">1 · 很低</option>
+      </select></div>
+      <div class="field"><label>最早开始</label><input id="f6" type="date"></div>
+    </div>
+    <div class="field"><label>备注</label><textarea id="f7" rows="3"></textarea></div>
+    <div class="foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn primary" onclick="saveTask()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"><span id="toastMsg"></span><button id="toastBtn" style="display:none">撤销</button></div>
+
+<script>
+/* ============================================================
+   StudyOS v3 · 可用时间窗 + 固定课表 + 时间块排程
+   排程原则：可用时间窗 → 扣除固定课 → 按 (截止日/优先级/方向权重) 切块填充
+   ============================================================ */
+const K='study_os_v3', KOLD='study_os_v2';
+const WD=['日','一','二','三','四','五','六'];
+const WN={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'日':0,'天':0};
+const CATW={408:20,项目:14,数学:12,英语:8,算法:6,六级:2,其他:0};
+const CATS=['408','数学','英语','项目','算法','六级','其他'];
+
+const ALLDAY=[['09:00','12:15'],['14:30','18:00'],['19:00','22:00']];
+const DEF_AVAIL={
+  1:[['19:00','22:00']],
+  2:[['09:00','12:15'],['14:30','16:00'],['19:00','22:00']],
+  3:[['19:00','22:00']],
+  4:[['09:00','12:15'],['14:30','16:00'],['19:00','22:00']],
+  5:[['09:00','10:00'],['15:45','18:00'],['19:00','22:00']],
+  6:[['09:00','12:15'],['14:30','18:00'],['19:00','22:00']],
+  0:[['09:00','12:15'],['19:00','22:00']]
+};
+const DEF_AVAIL_OFF={0:ALLDAY.slice(),1:ALLDAY.slice(),2:ALLDAY.slice(),3:ALLDAY.slice(),4:ALLDAY.slice(),5:ALLDAY.slice(),6:ALLDAY.slice()};
+const DEF_CLASSES={
+  0:[{s:'14:00',e:'15:45',n:'市场营销',r:'M207'},{s:'16:05',e:'17:50',n:'市场营销',r:'M207'}],
+  1:[{s:'08:00',e:'09:45',n:'物联网系统',r:'M401'},{s:'10:05',e:'11:50',n:'操作系统',r:'N333'},{s:'14:00',e:'15:45',n:'体育（网球）',r:''},{s:'16:05',e:'17:50',n:'计算机网络',r:'N331'}],
+  2:[{s:'16:05',e:'17:50',n:'并行计算',r:'M203'}],
+  3:[{s:'08:00',e:'09:45',n:'物联网系统',r:'M401'},{s:'10:05',e:'11:50',n:'操作系统',r:'N333'},{s:'14:00',e:'15:45',n:'计算机网络',r:'N331'}],
+  4:[{s:'16:05',e:'17:50',n:'并行计算',r:'M203'}],
+  5:[{s:'10:05',e:'11:50',n:'操作系统',r:'N333'},{s:'14:00',e:'15:45',n:'计算机网络',r:'N331'}],
+  6:[]
+};
+
+/* ---------- 小工具 ---------- */
+const pad2=n=>String(n).padStart(2,'0');
+const isoOf=d=>d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+const iso=d=>isoOf(d||new Date());
+const TODAY=iso();
+const D=s=>new Date(s+'T12:00:00');
+const addDays=(s,n)=>{const d=D(s);d.setDate(d.getDate()+n);return isoOf(d)};
+const dow=s=>D(s).getDay();
+const fdate=s=>{const d=D(s);return (d.getMonth()+1)+'/'+d.getDate()};
+const diffDays=(a,b)=>Math.round((D(a)-D(b))/864e5);
+const hm2min=t=>{const[a,b]=String(t).split(':').map(Number);return a*60+b};
+const r5=m=>Math.round(m/5)*5;
+const fmtH=h=>{const m=Math.round(h*60),H=Math.floor(m/60),M=m%60;if(!H&&!M)return'0分';if(!H)return M+'分';return H+'h'+(M?M+'分':'')};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* ---------- 状态 ---------- */
+function defaultSettings(){return{reserve:.5,minUnit:25,maxPerDayPerTask:2.5,semesterEnd:'2026-11-02'}}
+function tmplTasks(){
+  const b=TODAY;
+  const T=(title,category,days,hours,priority,startOffset=0,note='')=>({id:uid(),title,category,due:addDays(b,days),hours,priority,start:addDays(b,startOffset),note,done:0});
+  return [
+    T('408：数据结构复盘 + 真题基础','408',70,32,5,0,'上学期已学过：重建考研框架、经典题型与错题'),
+    T('408：组成原理复盘 + 真题基础','408',85,38,5,0,'上学期已学过：补考研细节并开始真题'),
+    T('课程+408：操作系统同步学习','408',58,32,5,0,'本学期正在上课：课程内容直接整理成408笔记'),
+    T('课程+408：计算机网络同步学习','408',58,28,5,0,'本学期正在上课：课程内容直接整理成408笔记'),
+    T('操作系统课程考试冲刺','408',52,14,5,30,'十月底/十一月初考试，考前集中复习并沉淀408笔记'),
+    T('计算机网络课程考试冲刺','408',52,14,5,30,'十月底/十一月初考试，考前集中复习并沉淀408笔记'),
+    T('数学一：基础阶段','数学',150,100,5,0,'高数为主，线代/概率穿插'),
+    T('英语一：词汇 + 阅读习惯','英语',175,70,4,0,'长期小剂量，服务考研英语'),
+    T('Java基础 + 面向对象','项目',35,35,4,0,'先能独立写，再做Spring'),
+    T('Spring Boot + MySQL 项目V1','项目',105,60,4,15,'完成一个可运行后端项目'),
+    T('Redis + Linux + Git','项目',120,30,4,45,'边学边接入项目'),
+    T('算法基础：数组/链表/哈希/树','算法',135,40,3,0,'每周3-5小时'),
+    T('六级刷分：真题与听力','六级',95,25,2,40,'和考研英语复用')
+  ];
+}
+function freshState(){return{settings:defaultSettings(),avail:clone(DEF_AVAIL),availOff:clone(DEF_AVAIL_OFF),classes:clone(DEF_CLASSES),tasks:tmplTasks(),alloc:{}}}
+
+function normalize(x){
+  const s=freshState();
+  const o=Object.assign({},x);
+  o.settings=Object.assign(defaultSettings(),x.settings||{});
+  o.avail=x.avail&&Object.keys(x.avail).length?x.avail:clone(DEF_AVAIL);
+  o.availOff=x.availOff&&Object.keys(x.availOff).length?x.availOff:clone(DEF_AVAIL_OFF);
+  o.classes=x.classes||clone(DEF_CLASSES);
+  o.tasks=Array.isArray(x.tasks)?x.tasks.map(t=>({
+    id:t.id||uid(),title:t.title||'(未命名)',category:CATS.includes(t.category)?t.category:'其他',
+    due:t.due||addDays(TODAY,30),hours:+t.hours||2,priority:+t.priority||3,
+    start:t.start||TODAY,note:t.note||'',done:t.done?1:0
+  })):s.tasks;
+  o.alloc=x.alloc&&typeof x.alloc==='object'?x.alloc:{};
+  return o;
+}
+function load(){
+  try{const raw=localStorage.getItem(K);if(raw){const x=JSON.parse(raw);if(x&&Array.isArray(x.tasks))return normalize(x)}}catch(e){}
+  try{
+    const old=JSON.parse(localStorage.getItem(KOLD)||'null');
+    if(old&&Array.isArray(old.tasks)){
+      return normalize({tasks:old.tasks,settings:Object.assign(defaultSettings(),{reserve:.5})});
+    }
+  }catch(e){}
+  return freshState();
+}
+let S=load();
+let filter='all', editId=null, lastRemoved=null;
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+
+/* ---------- 课表 / 时间窗 ---------- */
+function classesFor(d){
+  if(d>S.settings.semesterEnd)return[];
+  return S.classes[dow(d)]||[];
+}
+function classMinutes(d){return classesFor(d).reduce((a,c)=>a+Math.max(0,hm2min(c.e)-hm2min(c.s)),0)}
+function subWindow(w,c){
+  if(c.e<=w.s||c.s>=w.e)return[w];
+  const out=[];
+  if(c.s>w.s)out.push({s:w.s,e:Math.min(c.s,w.e)});
+  if(c.e<w.e)out.push({s:Math.max(c.e,w.s),e:w.e});
+  return out.filter(x=>x.e>x.s);
+}
+function freeWindows(d){
+  const off=d>S.settings.semesterEnd;
+  const src=off?S.availOff:S.avail;
+  let wins=(src[dow(d)]||[]).map(x=>Array.isArray(x)?{s:hm2min(x[0]),e:hm2min(x[1])}:{s:hm2min(x.s),e:hm2min(x.e)});
+  const cls=(off?[]:classesFor(d)).map(c=>({s:hm2min(c.s),e:hm2min(c.e)}));
+  cls.forEach(c=>{const next=[];wins.forEach(w=>next.push(...subWindow(w,c)));wins=next});
+  return wins.filter(w=>w.e-w.s>=20).sort((a,b)=>a.s-b.s);
+}
+function freeMinutes(d){return freeWindows(d).reduce((a,w)=>a+w.e-w.s,0)}
+function capMinutes(d){return Math.max(0,freeMinutes(d)-r5(S.settings.reserve*60))}
+
+/* ---------- 排序权重 ---------- */
+function effDue(t){return t.due&&t.due<TODAY?TODAY:(t.due||addDays(TODAY,30))}
+function score(t,from){
+  const p=+t.priority||3;
+  const days=diffDays(t.due,from);
+  const urg=days<=0?70:Math.max(0,30-days)*2.2;
+  return p*12+urg+(CATW[t.category]||0);
+}
+
+/* ---------- 排程核心 ---------- */
+function computePlan(){
+  const HORIZON=120;
+  const days=[];
+  for(let i=0;i<HORIZON;i++){
+    const d=addDays(TODAY,i);
+    days.push({d,free:freeMinutes(d),cap:capMinutes(d),used:0,taskUsed:{}});
+  }
+  const alloc={};days.forEach(x=>alloc[x.d]=[]);
+  const tasks=S.tasks.filter(t=>!t.done);
+  const rem={};tasks.forEach(t=>rem[t.id]=Math.max(0,+t.hours||0));
+  const maxPer=Math.round((+S.settings.maxPerDayPerTask||2.5)*60);
+  const MINB=Math.min(90,Math.max(10,Math.round(+S.settings.minUnit||25)));  // 最小学习单元（分钟）
+
+  /* 时间窗只用来回答“这天有多少小时可用”，不再决定几点学什么。
+     同一任务同一天的量合并成一条，避免出现零碎条目。 */
+  function push(day,id,unitMin){
+    if(day.cap-day.used<MINB)return 0;
+    const perRoom=maxPer-(day.taskUsed[id]||0);
+    const take=r5(Math.min(rem[id]*60,perRoom,unitMin,day.cap-day.used));
+    if(take<MINB)return 0;
+    const row=alloc[day.d].find(r=>r.id===id);
+    if(row){row.m+=take;row.h=row.m/60}else alloc[day.d].push({id,m:take,h:take/60});
+    day.used+=take;
+    day.taskUsed[id]=(day.taskUsed[id]||0)+take;
+    rem[id]=Math.max(0,rem[id]-take/60);
+    return take;
+  }
+
+  /* 每个任务按「剩余工作量 ÷ 到截止日还剩几个能学的天」每天累积应做量，
+     攒够一个最小学习单元才安排。这样远期任务不会被全部挤到最后几天。 */
+  const debt={};tasks.forEach(t=>debt[t.id]=0);
+  for(let di=0;di<days.length;di++){
+    const day=days[di];
+    for(const t of tasks){
+      if(rem[t.id]<=1/60)continue;
+      const due=effDue(t);
+      if(day.d<t.start||day.d>due)continue;
+      let n=0;
+      for(let i=di;i<days.length;i++){if(days[i].d>due)break;if(days[i].cap>=MINB)n++}
+      debt[t.id]+=rem[t.id]/Math.max(1,n);
+    }
+    if(day.cap<MINB)continue;
+    let guard=0;
+    while(day.cap-day.used>=MINB&&guard++<60){
+      const pick=th=>tasks.filter(t=>debt[t.id]*60>=th
+        &&rem[t.id]>1/60
+        &&day.d>=t.start
+        &&day.d<=effDue(t)
+        &&(day.taskUsed[t.id]||0)<maxPer
+      ).sort((a,b)=>score(b,day.d)-score(a,day.d))[0];
+      let cand=pick(MINB), unit=cand?debt[cand.id]*60:0;
+      if(!cand&&day.cap-day.used>=60){        // 这天还剩很多容量：向未来借一点，先把进度推上去
+        cand=pick(15);
+        if(cand)unit=MINB;
+      }
+      if(!cand)break;
+      const placed=push(day,cand.id,unit);
+      if(placed<MINB)break;
+      debt[cand.id]-=placed/60;                // 允许为负：借出去的会在后面还回来
+    }
+  }
+  const horizonEnd=days[days.length-1].d;
+  const unplaced=tasks.filter(t=>rem[t.id]>0.05).map(t=>({
+    title:t.title,category:t.category,deficit:+rem[t.id].toFixed(1),due:t.due,
+    beyond:t.due>horizonEnd,tail:rem[t.id]<0.5
+  })).sort((a,b)=>b.deficit-a.deficit);
+  return{alloc,unplaced,days,horizonEnd};
+}
+function plan(){
+  const btn=document.getElementById('planBtn'),status=document.getElementById('planStatus');
+  if(btn){btn.disabled=true;btn.textContent='⏳ 正在重排…'}
+  if(status)status.textContent='正在按可用时间窗 + 固定课表 + 截止日 + 优先级重新计算…';
+  setTimeout(()=>{
+    try{
+      const r=computePlan();
+      S.alloc=r.alloc;save();render();
+      window.__unplaced=r.unplaced;
+      const mins=Object.values(r.alloc).flat().reduce((a,b)=>a+b.h*60,0);
+      const hard=r.unplaced.filter(u=>!u.beyond&&!u.tail),soft=r.unplaced.filter(u=>u.beyond),tail=r.unplaced.filter(u=>!u.beyond&&u.tail);
+      if(status)status.textContent=(hard.length?'⚠️ ':'✅ ')+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})
+        +' 已重排 · 未来 120 天共排出 '+(mins/60).toFixed(0)+'h'
+        +(hard.length?' · '+hard.length+' 个任务排不下，见下方提示':'')
+        +(soft.length?' · '+soft.length+' 个任务截止日在 120 天之后，按月推进即可':'')
+        +(tail.length?' · '+tail.length+' 个任务只剩不到 0.5h 的取整零头':'');
+    }catch(err){
+      console.error(err);
+      if(status)status.textContent='❌ 重排失败：'+(err&&err.message||'未知错误');
+      showToast('❌ 重排失败：'+(err&&err.message||err));
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent='✨ 智能重排'}
+    }
+  },0);
+}
+
+/* ---------- 渲染 ---------- */
+function items(d){
+  return (S.alloc[d]||[]).map(x=>({...x,t:S.tasks.find(t=>t.id===x.id)})).filter(x=>x.t);
+}
+/* 按方向汇总：先出方向总时长，再列该方向今天要做的事 */
+function groups(d){
+  const rows=items(d),out=[];
+  CATS.forEach(cat=>{
+    const rs=rows.filter(r=>r.t.category===cat);
+    if(!rs.length)return;
+    out.push({cat,h:rs.reduce((a,r)=>a+r.h,0),rows:rs.sort((a,b)=>b.h-a.h)});
+  });
+  return out;
+}
+function catTag(c){return '<span class="tag">'+esc(c)+'</span>'}
+/* 任务名去掉和方向重复的前缀，例如“408：数据结构复盘 + 真题基础”→“数据结构复盘 + 真题基础” */
+function brief(t){
+  const s=String(t.title||'');
+  const i=s.search(/[：:]/);
+  if(i>0&&i<=8){
+    const head=s.slice(0,i),rest=s.slice(i+1).trim();
+    if(rest.length>=3&&(head.indexOf(t.category)>=0||t.category.indexOf(head)>=0))return rest;
+  }
+  return s;
+}
+function render(){
+  let calHtml='';
+  for(let i=0;i<7;i++){
+    const d=addDays(TODAY,i),gs=groups(d),cls=classesFor(d);
+    const free=freeMinutes(d)/60,planned=gs.reduce((a,g)=>a+g.h,0);
+    let html='<div class="day"><b>'+fdate(d)+'</b><div class="dow">周'+WD[dow(d)]+(i===0?' · 今天':'')+'</div>'
+      +'<div class="daycap">计划 '+planned.toFixed(1)+'h / 可用 '+free.toFixed(1)+'h</div>';
+    if(cls.length){
+      html+='<div class="class-head">固定课 '+(classMinutes(d)/60).toFixed(1)+'h</div>';
+      cls.forEach(c=>{html+='<div class="subline">'+esc(c.n)+'<span>'+c.s+'–'+c.e+(c.r?' · '+esc(c.r):'')+'</span></div>'});
+    }
+    if(gs.length){
+      html+='<div class="class-head">今天学什么</div>';
+      gs.forEach(g=>{
+        html+='<div class="catline">'+catTag(g.cat)+'<b>'+fmtH(g.h)+'</b></div>';
+        html+='<div class="catnote">'+g.rows.map(r=>esc(brief(r.t))+' '+fmtH(r.h)).join(' · ')+'</div>';
+      });
+    }else if(cls.length){
+      html+='<div class="muted" style="margin-top:8px">这天没有空档，不安排学习</div>';
+    }else{
+      html+='<div class="muted" style="margin-top:8px">暂无安排</div>';
+    }
+    calHtml+=html+'</div>';
+  }
+  document.getElementById('cal').innerHTML=calHtml;
+
+  const today=items(TODAY),todayGroups=groups(TODAY);
+  const tl=document.getElementById('todayList');
+  tl.innerHTML=today.length?todayGroups.map(g=>
+    '<div class="catgrp"><div class="hd">'+catTag(g.cat)+'<span>'+fmtH(g.h)+'</span></div>'
+    +g.rows.map(r=>'<div class="task" style="margin-top:7px;background:transparent;border:0;padding:0">'
+      +'<input type="checkbox" '+(r.t.done?'checked':'')+' onchange="toggleDone(\''+r.t.id+'\',this.checked)">'
+      +'<div><h4>'+esc(brief(r.t))+'</h4><p>'+esc(r.t.note||'')+'</p></div>'
+      +'<div class="right"><b>'+fmtH(r.h)+'</b><small>P'+r.t.priority+'</small></div></div>').join('')
+    +'</div>').join('')
+    :'<div class="muted">今天没有安排。</div>';
+  const todayPlanned=today.reduce((a,x)=>a+x.h,0);
+  document.getElementById('stoday').textContent=todayPlanned.toFixed(1)+'h';
+  document.getElementById('stodaySub').textContent='今日计划 / 可用 '+(freeMinutes(TODAY)/60).toFixed(1)+'h · 留白 '+Math.max(0,freeMinutes(TODAY)/60-todayPlanned).toFixed(1)+'h';
+  document.getElementById('sback').textContent=S.tasks.filter(t=>!t.done).length;
+  document.getElementById('sdone').textContent=(S.tasks.length?Math.round(S.tasks.filter(t=>t.done).length/S.tasks.length*100):0)+'%';
+  const todo=S.tasks.filter(t=>!t.done).slice().sort((a,b)=>D(a.due)-D(b.due));
+  document.getElementById('sdue').textContent=todo.length?fdate(todo[0].due)+'（'+diffDays(todo[0].due,TODAY)+'天）':'--';
+
+  const free=today.length?Math.max(0,freeMinutes(TODAY)/60-capMinutes(TODAY)/60):0;
+  document.getElementById('line').textContent=new Date().toLocaleDateString('zh-CN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
+    +' · 今日课程 '+(classMinutes(TODAY)/60).toFixed(1)+'h · 可用自习 '+(freeMinutes(TODAY)/60).toFixed(1)+'h'+(free>0?'（含 '+free.toFixed(1)+'h 机动）':'');
+
+  let notice='当前策略：OS、计网课程 = 408 第一轮学习的一部分，上课内容直接沉淀成 408 笔记；组成原理、数据结构按“已学过，考研复盘”处理。';
+  if(TODAY>S.settings.semesterEnd)notice='学期结束后：课表已自动失效，408 / 项目 / 算法权重提高，进入强化阶段。';
+  else if(new Date(TODAY)>=new Date(addDays(S.settings.semesterEnd,-14)))notice='课程考试临近：系统按截止日自动把 OS / 计网考试冲刺排到前面。';
+  document.getElementById('todayNotice').textContent=notice;
+
+  const unAll=window.__unplaced||[];
+  const un=unAll.filter(u=>!u.beyond&&!u.tail);
+  const soft=unAll.filter(u=>u.beyond);
+  const tail=unAll.filter(u=>!u.beyond&&u.tail);
+  const ov=document.getElementById('overload');
+  if(un.length){
+    ov.style.display='block';
+    ov.innerHTML='<b>当前时间装不下以下任务</b>（差额 = 还需多少小时才能真正排完）<br>'
+      +un.map(u=>'· '+esc(u.title)+'　还差 <b>'+u.deficit+'h</b>（截止 '+fdate(u.due)+'）').join('<br>')
+      +'<br><span class="muted" style="color:#c8b083">处理办法：把截止日往后推、把时长改小、增加可用时间窗，或降低这些任务的优先级。</span>';
+  }else if(soft.length){
+    ov.style.display='block';
+    ov.innerHTML='<b>排程余量充足</b><br>以下任务的截止日在未来 120 天之后，系统已按日均量推进，剩余部分会随窗口自动排进去：<br>'
+      +soft.map(u=>'· '+esc(u.title)+'　未来 120 天之外还剩 '+u.deficit+'h（截止 '+fdate(u.due)+'）').join('<br>');
+  }else if(tail.length){
+    ov.style.display='block';
+    ov.innerHTML='<b>排程已排满</b><br>以下任务只剩不足 0.5 小时的取整零头（不影响执行，抽空补一下就完成）：<br>'
+      +tail.map(u=>'· '+esc(u.title)+'　剩 '+u.deficit+'h').join('<br>');
+  }else ov.style.display='none';
+
+  document.getElementById('up').innerHTML=todo.slice(0,7).map(t=>
+    '<div class="task"><div>'+catTag(t.category)+'</div><div><h4>'+esc(t.title)+'</h4>'
+    +'<p>截止 '+fdate(t.due)+'（'+diffDays(t.due,TODAY)+'天） · 剩余 '+t.hours+'h</p></div>'
+    +'<div class="right"><b>P'+t.priority+'</b></div></div>').join('')||'<div class="muted">没有待完成任务。</div>';
+
+  document.getElementById('cls1').innerHTML=[1,2,3].map(k=>'<b>周'+WD[k]+'</b> '+(S.classes[k]||[]).map(c=>c.s+' '+esc(c.n)+(c.r?'（'+esc(c.r)+'）':'')).join(' · ')).join('<br>');
+  document.getElementById('cls2').innerHTML=[4,5,6,0].map(k=>'<b>周'+WD[k]+'</b> '+(S.classes[k]||[]).map(c=>c.s+' '+esc(c.n)+(c.r?'（'+esc(c.r)+'）':'')).join(' · ')).join('<br>')
+    +'<br><span class="muted">课表有效至 '+S.settings.semesterEnd+'</span>';
+
+  [['408','p408','b408'],['项目','ppro','bpro'],['算法','pcode','bcode']].forEach(([cat,p,b])=>{
+    const T=S.tasks.filter(t=>t.category===cat);
+    const v=T.reduce((x,t)=>x+t.hours,0),z=T.reduce((x,t)=>x+t.hours*(+t.done||0),0);
+    const q=v?Math.round(z/v*100):0;
+    document.getElementById(p).textContent=q+'%';
+    document.getElementById(b).style.width=q+'%';
+  });
+  renderTasks();
+}
+function renderTasks(){
+  const a=S.tasks.filter(t=>filter==='all'||(filter==='todo'&&!t.done)||(filter==='done'&&t.done))
+    .slice().sort((x,y)=>D(x.due)-D(y.due));
+  document.getElementById('taskList').innerHTML=a.length?a.map(t=>
+    '<div class="task"><input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleDone(\''+t.id+'\',this.checked)">'
+    +'<div><h4>'+esc(t.title)+'</h4><p>'+catTag(t.category)+' · 截止 '+fdate(t.due)+' · '+t.hours+'h · P'+t.priority+(t.note?' · '+esc(t.note):'')+'</p></div>'
+    +'<div class="right"><button type="button" class="btn" data-edit-id="'+t.id+'">编辑</button> '
+    +'<button type="button" class="btn danger" data-delete-id="'+t.id+'">删除</button></div></div>').join('')
+    :'<div class="muted">没有符合条件的任务。</div>';
+}
+function setFilter(f){filter=f;renderTasks()}
+function view(v,b){
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));
+  if(b)b.classList.add('on');
+  ['dash','tasks','settings'].forEach(x=>document.getElementById(x).style.display=x===v?'block':'none');
+  document.getElementById('pt').textContent=v==='dash'?'今日学习中枢':v==='tasks'?'任务库':'学习设置';
+  if(v==='settings')fillSettingsForm();
+}
+function goToday(){view('dash',document.querySelector('.nav button'));window.scrollTo(0,0)}
+
+/* ---------- 反馈 ---------- */
+let toastTimer=null;
+function showToast(msg,undo){
+  const t=document.getElementById('toast'),m=document.getElementById('toastMsg'),b=document.getElementById('toastBtn');
+  m.textContent=msg;
+  if(undo){b.style.display='';b.onclick=()=>{undo();hideToast()}}else{b.style.display='none';b.onclick=null}
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(hideToast,undo?8000:3200);
+}
+function hideToast(){document.getElementById('toast').classList.remove('show')}
+
+/* ---------- 任务增删改 ---------- */
+function openModal(i=null){
+  editId=i;
+  const sel=document.getElementById('f2');
+  if(!sel.options.length)sel.innerHTML=CATS.map(c=>'<option>'+c+'</option>').join('');
+  const t=i&&S.tasks.find(x=>x.id===i);
+  document.getElementById('mt').textContent=t?'编辑任务':'新任务';
+  document.getElementById('f1').value=t?t.title:'';
+  document.getElementById('f2').value=t?t.category:'408';
+  document.getElementById('f3').value=t?t.due:addDays(TODAY,30);
+  document.getElementById('f4').value=t?t.hours:2;
+  document.getElementById('f5').value=t?t.priority:3;
+  document.getElementById('f6').value=t?t.start:TODAY;
+  document.getElementById('f7').value=t?t.note:'';
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveTask(){
+  const title=document.getElementById('f1').value.trim();
+  if(!title){showToast('❌ 任务名不能为空');return}
+  const obj={
+    title,
+    category:document.getElementById('f2').value,
+    due:document.getElementById('f3').value||addDays(TODAY,30),
+    hours:Math.max(.25,+document.getElementById('f4').value||2),
+    priority:+document.getElementById('f5').value||3,
+    start:document.getElementById('f6').value||TODAY,
+    note:document.getElementById('f7').value.trim()
+  };
+  if(editId){
+    const t=S.tasks.find(x=>x.id===editId);
+    if(t)Object.assign(t,obj);
+    closeModal();
+    showToast('✅ 已保存：'+title);
+  }else{
+    S.tasks.push(Object.assign({id:uid(),done:0},obj));
+    closeModal();
+    showToast('✅ 已新增：'+title);
+  }
+  editId=null;
+  S.alloc={};               // 修改任务后清理旧排程，避免残留/重复时间块
+  plan();
+}
+function toggleDone(i,checked){
+  const t=S.tasks.find(x=>x.id===i);
+  if(!t)return;
+  t.done=checked?1:0;
+  S.alloc={};
+  save();
+  plan();
+  showToast((checked?'✅ 已完成：':'↩️ 恢复为待完成：')+t.title);
+}
+function removeTask(i){
+  const idx=S.tasks.findIndex(x=>x.id===i);
+  if(idx<0){showToast('❌ 删除失败：找不到这个任务');return}
+  const removed=S.tasks[idx];
+  S.tasks.splice(idx,1);
+  S.alloc={};                        // 删除 → 清理旧排程
+  save();
+  plan();                            // → 自动重新排程 → 刷新
+  lastRemoved={task:removed,index:idx};
+  showToast('🗑 已删除：'+removed.title,()=>{
+    if(!lastRemoved)return;
+    S.tasks.splice(lastRemoved.index,0,lastRemoved.task);
+    lastRemoved=null;
+    S.alloc={};save();plan();
+    showToast('↩️ 已恢复：'+removed.title);
+  });
+}
+
+/* ---------- 设置 ---------- */
+function availToText(a){
+  return [1,2,3,4,5,6,0].map(k=>'周'+WD[k]+' '+(a[k]||[]).map(w=>Array.isArray(w)?w[0]+'-'+w[1]:w.s+'-'+w.e).join(', ')).join('\n');
+}
+function parseAvail(text){
+  const out={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  text.split('\n').forEach((line,idx)=>{
+    const s=line.trim();if(!s)return;
+    const m=s.match(/^周?\s*([一二三四五六日天])\s*[:：]?\s*(.*)$/);
+    if(!m)throw new Error('第 '+(idx+1)+' 行看不懂：'+s+'（应像「一 19:00-22:00」）');
+    const k=WN[m[1]];
+    const body=m[2].trim();
+    out[k]=body?body.split(/[,，]/).map(x=>x.trim()).filter(Boolean).map(x=>{
+      const mm=x.match(/^(\d{1,2}:\d{2})\s*[-~－到]\s*(\d{1,2}:\d{2})$/);
+      if(!mm)throw new Error('第 '+(idx+1)+' 行时间段看不懂：'+x);
+      if(hm2min(mm[2])<=hm2min(mm[1]))throw new Error('第 '+(idx+1)+' 行结束时间必须晚于开始时间：'+x);
+      return[mm[1].padStart(5,'0'),mm[2].padStart(5,'0')];
+    }):[];
+  });
+  return out;
+}
+function classesToText(c){
+  return [1,2,3,4,5,6,0].map(k=>(c[k]||[]).map(x=>'周'+WD[k]+' '+x.s+'-'+x.e+' '+x.n+(x.r?' @'+x.r:'')).join('\n')).filter(Boolean).join('\n');
+}
+function parseClasses(text){
+  const out={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  text.split('\n').forEach((line,idx)=>{
+    const s=line.trim();if(!s)return;
+    const m=s.match(/^周?\s*([一二三四五六日天])\s+(\d{1,2}:\d{2})\s*[-~－]\s*(\d{1,2}:\d{2})\s+(.+)$/);
+    if(!m)throw new Error('第 '+(idx+1)+' 行看不懂：'+s+'（应像「一 10:05-11:50 操作系统 @N333」）');
+    const k=WN[m[1]];
+    const rest=m[4].trim();
+    const at=rest.lastIndexOf('@');
+    const n=at>=0?rest.slice(0,at).trim():rest;
+    const r=at>=0?rest.slice(at+1).trim():'';
+    if(hm2min(m[3])<=hm2min(m[2]))throw new Error('第 '+(idx+1)+' 行结束时间必须晚于开始时间：'+s);
+    out[k].push({s:m[2].padStart(5,'0'),e:m[3].padStart(5,'0'),n,r});
+  });
+  return out;
+}
+function fillSettingsForm(){
+  document.getElementById('sReserve').value=S.settings.reserve;
+  document.getElementById('sUnit').value=S.settings.minUnit||25;
+  document.getElementById('sPer').value=S.settings.maxPerDayPerTask;
+  document.getElementById('sEnd').value=S.settings.semesterEnd;
+  document.getElementById('tAvail').value=availToText(S.avail);
+  document.getElementById('tAvailOff').value=availToText(S.availOff);
+  document.getElementById('tClasses').value=classesToText(S.classes);
+  document.getElementById('setMsg').textContent='';
+}
+function saveSettings(){
+  const msg=document.getElementById('setMsg');
+  try{
+    const avail=parseAvail(document.getElementById('tAvail').value);
+    const availOff=parseAvail(document.getElementById('tAvailOff').value);
+    const classes=parseClasses(document.getElementById('tClasses').value);
+    if([0,1,2,3,4,5,6].every(k=>!avail[k].length))throw new Error('“可用时间窗（日常）”至少要给一天填一个时间段，否则没东西可排');
+    let keptOff='';
+    for(const k of [0,1,2,3,4,5,6]){
+      if(!availOff[k].length){                       // 留空就沿用原来的，避免学期后突然排不出东西
+        const prev=S.availOff[k];
+        availOff[k]=(prev&&prev.length)?prev:clone(DEF_AVAIL_OFF[k]);
+        keptOff='（学期后时间窗留空的几天沿用了原设置）';
+      }
+    }
+    S.settings={
+      reserve:Math.max(0,+document.getElementById('sReserve').value||0),
+      minUnit:Math.min(90,Math.max(10,Math.round(+document.getElementById('sUnit').value||25))),
+      maxPerDayPerTask:Math.max(.5,+document.getElementById('sPer').value||2.5),
+      semesterEnd:document.getElementById('sEnd').value||S.settings.semesterEnd
+    };
+    S.avail=avail;S.availOff=availOff;S.classes=classes;
+    S.alloc={};
+    save();
+    plan();
+    msg.textContent='✅ 已保存，排程已按新约束重算'+keptOff;
+  }catch(e){
+    msg.textContent='❌ '+e.message;
+    showToast('❌ 保存失败：'+e.message);
+  }
+}
+function exportJSON(){
+  try{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='studyos_backup_'+TODAY+'.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    showToast('⬇️ 已导出备份：studyos_backup_'+TODAY+'.json');
+  }catch(e){showToast('❌ 导出失败：'+e.message)}
+}
+function importJSON(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const x=JSON.parse(r.result);
+      if(!x||!Array.isArray(x.tasks))throw new Error('这个文件里没有 tasks');
+      S=normalize(x);S.alloc={};save();plan();
+      if(document.getElementById('settings').style.display!=='none')fillSettingsForm();
+      showToast('✅ 已导入 '+S.tasks.length+' 个任务');
+    }catch(e){showToast('❌ 导入失败：'+e.message)}
+  };
+  r.readAsText(file);
+}
+function resetAll(){
+  if(!confirm('恢复默认模板？会替换当前任务库、时间窗和课表。'))return;
+  S=freshState();S.alloc={};save();fillSettingsForm();plan();
+  showToast('↩️ 已恢复默认模板');
+}
+
+/* ---------- 事件代理（删除/编辑） ---------- */
+document.getElementById('taskList').addEventListener('click',function(ev){
+  const del=ev.target.closest('[data-delete-id]');
+  if(del){ev.preventDefault();ev.stopPropagation();removeTask(del.getAttribute('data-delete-id'));return}
+  const ed=ev.target.closest('[data-edit-id]');
+  if(ed){ev.preventDefault();openModal(ed.getAttribute('data-edit-id'))}
+});
+
+/* ---------- 启动 ---------- */
+plan();
+</script>
+</body>
+</html>

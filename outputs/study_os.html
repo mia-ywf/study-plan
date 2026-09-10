@@ -45,6 +45,10 @@ button{cursor:pointer}
 .day b{font-size:12px}
 .dow{font-size:10px;color:var(--m)}
 .daycap{font-size:9px;color:#7f8aa3;margin-top:4px;border-bottom:1px dashed #26304a;padding-bottom:5px}
+.class-head{margin-top:9px;font-size:9px;color:#7f8aa3;letter-spacing:.4px}
+.class-chip{margin-top:5px;padding:6px 7px;border-radius:8px;background:#202a3e;border-left:3px solid #6b7890;font-size:10px;line-height:1.35}
+.class-chip b{font-weight:600;color:#e0e7f5}
+.class-chip span{color:#8e9ab1}
 .chip{margin-top:6px;padding:6px 7px;background:#192541;border-radius:8px;border-left:3px solid var(--a);font-size:10px;line-height:1.45}
 .chip i{font-style:normal;display:block;color:#9fb6ff;font-weight:700;font-size:10px;margin-bottom:2px}
 .chip.done{opacity:.4;text-decoration:line-through}
@@ -283,6 +287,8 @@ const WD=['日','一','二','三','四','五','六'];
 const WN={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'日':0,'天':0};
 const CATW={408:20,项目:14,数学:12,英语:8,算法:6,六级:2,其他:0};
 const CATS=['408','数学','英语','项目','算法','六级','其他'];
+const CATCOLOR={408:'#ff6f7d',数学:'#7aa2ff',英语:'#65d6b2',项目:'#b98cff',算法:'#e8b661',六级:'#5cc8d8',其他:'#8e9ab1'};
+const catColor=c=>CATCOLOR[c]||'#8e9ab1';
 
 const ALLDAY=[['09:00','12:15'],['14:30','18:00'],['19:00','22:00']];
 const DEF_AVAIL={
@@ -532,17 +538,19 @@ function render(){
   for(let i=0;i<7;i++){
     const d=addDays(TODAY,i),gs=groups(d),cls=classesFor(d);
     const free=freeMinutes(d)/60,planned=gs.reduce((a,g)=>a+g.h,0);
-    let html='<div class="day"><b>'+fdate(d)+'</b><div class="dow">周'+WD[dow(d)]+(i===0?' · 今天':'')+'</div>'
+    let html='<div class="day"><b>'+fdate(d)+'</b><div class="dow">周'+WD[dow(d)]+(i===0?' · 今天':'')+' · 课 '+(classMinutes(d)/60).toFixed(1)+'h</div>'
       +'<div class="daycap">计划 '+planned.toFixed(1)+'h / 可用 '+free.toFixed(1)+'h</div>';
     if(cls.length){
-      html+='<div class="class-head">固定课 '+(classMinutes(d)/60).toFixed(1)+'h</div>';
-      cls.forEach(c=>{html+='<div class="subline">'+esc(c.n)+'<span>'+c.s+'–'+c.e+(c.r?' · '+esc(c.r):'')+'</span></div>'});
+      html+='<div class="class-head">固定课</div>';
+      cls.forEach(c=>{html+='<div class="class-chip"><b>'+esc(c.n)+'</b><br><span>'+c.s+'–'+c.e+(c.r?' · '+esc(c.r):'')+'</span></div>'});
     }
     if(gs.length){
-      html+='<div class="class-head">今天学什么</div>';
+      html+='<div class="class-head">自习</div>';
       gs.forEach(g=>{
-        html+='<div class="catline">'+catTag(g.cat)+'<b>'+fmtH(g.h)+'</b></div>';
-        html+='<div class="catnote">'+g.rows.map(r=>esc(brief(r.t))).join(' · ')+'</div>';
+        html+='<div class="chip" style="border-left-color:'+catColor(g.cat)+'">'
+          +'<i style="color:'+catColor(g.cat)+'">'+esc(g.cat)+' · '+fmtH(g.h)+'</i>'
+          +g.rows.map(r=>esc(brief(r.t))).join(' · ')
+          +'</div>';
       });
     }else if(cls.length){
       html+='<div class="muted" style="margin-top:8px">这天没有空档，不安排学习</div>';
@@ -556,7 +564,7 @@ function render(){
   const today=items(TODAY),todayGroups=groups(TODAY);
   const tl=document.getElementById('todayList');
   tl.innerHTML=today.length?todayGroups.map(g=>
-    '<div class="catgrp"><div class="hd">'+catTag(g.cat)+'<span>'+fmtH(g.h)+'</span></div>'
+    '<div class="catgrp" style="border-left:3px solid '+catColor(g.cat)+'"><div class="hd"><span style="color:'+catColor(g.cat)+'">'+esc(g.cat)+'</span><span>'+fmtH(g.h)+'</span></div>'
     +g.rows.map(r=>'<div class="task" style="margin-top:7px;background:transparent;border:0;padding:0">'
       +'<input type="checkbox" '+(r.t.done?'checked':'')+' onchange="toggleDone(\''+r.t.id+'\',this.checked)">'
       +'<div><h4>'+esc(brief(r.t))+'</h4><p>'+esc(r.t.note||'')+'</p></div>'

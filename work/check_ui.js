@@ -38,7 +38,7 @@ setTimeout(() => {
     ok('任务库已渲染', els.taskList.innerHTML.indexOf('data-delete-id') > 0);
     ok('未来7天日历已渲染', (els.cal.innerHTML.match(/class="day"/g) || []).length === 7);
     ok('今日计划按方向分组', (els.todayList.innerHTML.match(/class="catgrp"/g) || []).length >= 3, (els.todayList.innerHTML.match(/<span>([^<]+)<\\/span><span>([^<]+)<\\/span>/g) || []).slice(0, 4).join(' '));
-    ok('日历改成按方向给配额', (els.cal.innerHTML.match(/今天学什么/g) || []).length === 7 && els.cal.innerHTML.indexOf('自习时间块') < 0, (els.cal.innerHTML.match(/计划 [\\d.]+h \\/ 可用 [\\d.]+h/g) || []).slice(0, 3).join(' | '));
+    ok('日历按方向给出每日时长', (els.cal.innerHTML.match(/<i style="color:#/g) || []).length >= 7 && els.cal.innerHTML.indexOf('自习') > 0 && !/\\d\\d:\\d\\d–\\d\\d:\\d\\d<\\/i>/.test(els.cal.innerHTML), (els.cal.innerHTML.match(/计划 [\\d.]+h \\/ 可用 [\\d.]+h/g) || []).slice(0, 3).join(' | '));
     ok('顶部统计有数值', els.stoday.textContent !== '' && els.sdue.textContent !== '', els.stoday.textContent + ' / ' + els.sdue.textContent);
 
     view('settings', mkElProxy());

@@ -542,7 +542,7 @@ function render(){
       html+='<div class="class-head">今天学什么</div>';
       gs.forEach(g=>{
         html+='<div class="catline">'+catTag(g.cat)+'<b>'+fmtH(g.h)+'</b></div>';
-        html+='<div class="catnote">'+g.rows.map(r=>esc(brief(r.t))+' '+fmtH(r.h)).join(' · ')+'</div>';
+        html+='<div class="catnote">'+g.rows.map(r=>esc(brief(r.t))).join(' · ')+'</div>';
       });
     }else if(cls.length){
       html+='<div class="muted" style="margin-top:8px">这天没有空档，不安排学习</div>';
@@ -560,7 +560,7 @@ function render(){
     +g.rows.map(r=>'<div class="task" style="margin-top:7px;background:transparent;border:0;padding:0">'
       +'<input type="checkbox" '+(r.t.done?'checked':'')+' onchange="toggleDone(\''+r.t.id+'\',this.checked)">'
       +'<div><h4>'+esc(brief(r.t))+'</h4><p>'+esc(r.t.note||'')+'</p></div>'
-      +'<div class="right"><b>'+fmtH(r.h)+'</b><small>P'+r.t.priority+'</small></div></div>').join('')
+      +'</div>').join('')
     +'</div>').join('')
     :'<div class="muted">今天没有安排。</div>';
   const todayPlanned=today.reduce((a,x)=>a+x.h,0);
